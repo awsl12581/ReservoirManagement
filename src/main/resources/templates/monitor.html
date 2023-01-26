@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- 上述3个meta标签*必须*放在最前面，任何其他内容都*必须*跟随其后！ -->
+    <meta name="description" content="Intelligent Operation Center">
+    <meta name="author" content="GaoJie ESRI China @ 2016">
+    <link rel="icon" type="image/png" th:href="@{/images/logo.png}" href="../static/images/logo.png">
+    <title>Intelligent Operation Center</title>
+    <!-- Bootstrap core CSS -->
+    <link th:href="@{/libs/bootstrap-3.3.4/css/bootstrap.css}" href="../static/libs/bootstrap-3.3.4/css/bootstrap.css"
+          rel="stylesheet">
+    <!-- font-awesome CSS -->
+    <link th:href="@{/libs/font-awesome/css/font-awesome.css}" href="../static/libs/font-awesome/css/font-awesome.css"
+          rel="stylesheet">
+    <!-- animate CSS -->
+    <link th:href="@{/libs/animate/animate.min.css}" href="../static/libs/animate/animate.min.css" rel="stylesheet">
+    <!-- weather CSS -->
+    <link th:href="@{/libs/weather/screen.css}" href="../static/libs/weather/screen.css" rel="stylesheet">
+    <!-- <link rel="stylesheet" href="libs/xenon/css/xenon.css" type="text/css"> -->
+    <!-- scrollbar CSS -->
+    <link th:href="@{/libs/scrollbar/jquery.mCustomScrollbar.min.css}"
+          href="../static/libs/scrollbar/jquery.mCustomScrollbar.min.css" rel="stylesheet">
+    <!-- arcgis CSS -->
+    <link href="https://js.arcgis.com/4.0/dijit/themes/claro/claro.css" rel="stylesheet"/>
+    <link href="https://js.arcgis.com/4.0/esri/css/main.css" rel="stylesheet"/>
+    <!-- Custom styles for this template -->
+    <link th:href="@{/css/normalize.css}" href="../static/css/normalize.css" rel="stylesheet">
+    <link th:href="@{/css/component.css}" href="../static/css/component.css" rel="stylesheet">
+    <link th:href="@{/css/custom.css}" href="../static/css/custom.css" rel="stylesheet">
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <[if lt IE 9]>
+    <script th:src="@{/libs/html5shiv.min.js}" src="../static/libs/html5shiv.min.js"></script>
+    <script th:src="@{/libs/respond.min.js}" src="../static/libs/respond.min.js"></script>
+    <![endif]
+</head>
+<body>
+<!-- NAVBAR================================================== -->
+<nav class="navbar navbar-glass navbar-fixed-top">
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <a class="navbar-brand" href="monitor">
+                <img alt="logo" th:src="@{/images/logo.png}" src="../static/images/logo.png">
+                <div class="navbar-title">
+                    <span class="navbar-brand-text">综合运营管理中心</span>
+                    <span class="navbar-brand-subtext">Operations & Management Center</span>
+                </div>
+            </a>
+        </div>
+        <div class="navbar-collapse collapse">
+            <ul class="nav navbar-nav navbar-left">
+                <li class="date-line">
+                    <div class="navbar-title">
+                        <span class="navbar-brand-subtext" id="date"></span>
+                        <span class="navbar-brand-text" id="clock"></span>
+                    </div>
+                </li>
+            </ul>
+            <ul class="nav navbar-nav navbar-right" id="exit">
+                <li id="weather">
+                </li>
+                <!-- <li>
+                    <div id="line">
+                    </div>
+                </li> -->
+                <li id="TOC">
+                </li>
+                <!-- 按钮的分割线 -->
+                <!-- <li>
+                    <div id="line">
+                    </div>
+                </li> -->
+                <li>
+                    <a href="#"><span class="glyphicon glyphicon-off" aria-hidden="true"></span></a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+<!-- NAVBAR================================================== -->
+
+<!-- MAIN CONTAIN================================================== -->
+<div class="main-container">
+    <div id="map"></div>
+    <div id="leftBar" class="sideBar left opacity0">
+        <div class="bar-content" id="leftContent">
+        </div>
+        <span id="leftClickSpan" class="glyphicon glyphicon-option-vertical opration-handler"
+              aria-hidden="true"></span>
+    </div>
+
+    <div id="RightBar" class="sideBar right opacity0">
+            <span id="rightClickSpan" class="glyphicon glyphicon-option-vertical opration-handler"
+                  aria-hidden="true"></span>
+        <div class="bar-content" id="rightContent">
+        </div>
+    </div>
+
+    <div id="BottomBar" class="bottomBar opacity0">
+            <span id="bottomClickSpan" class="glyphicon glyphicon-option-horizontal opration-handler"
+                  aria-hidden="true"></span>
+        <div class="bar-content-bottom" id="bottomContent">
+        </div>
+    </div>
+</div>
+<!-- MAIN CONTAIN================================================== -->
+
+<!-- FOOTER================================================== -->
+<footer class="footer"></footer>
+<!-- FOOTER================================================== -->
+
+<!-- PAGEOVERLAY================================================== -->
+<div class="page-overlay"></div>
+<!-- PAGEOVERLAY================================================== -->
+
+<!-- MAIN CORE JAVASCRIPT================================================== -->
+<script th:src="@{/libs/jquery-1.11.3.min.js}" src="../static/libs/jquery-1.11.3.min.js"></script>
+<script th:src="@{/libs/AnimatedLetters/segment.min.js}" src="../static/libs/AnimatedLetters/segment.min.js"></script>
+<script th:src="@{/libs/AnimatedLetters/d3-ease.v0.6.js}" src="../static/libs/AnimatedLetters/d3-ease.v0.6.js"></script>
+<script th:src="@{/libs/AnimatedLetters/letters.js}" src="../static/libs/AnimatedLetters/letters.js"></script>
+<script th:src="@{/libs/echarts.min.js}" src="../static/libs/echarts.min.js"></script>
+<script th:src="@{/libs/scrollbar/jquery.mCustomScrollbar.concat.min.js}" src="../static/libs/scrollbar/jquery.mCustomScrollbar.concat.min.js"></script>
+<script th:src="@{/config/dojoConfig.js}" src="../static/config/dojoConfig.js"></script>
+<script th:src="@{/config/config.js}" src="../static/config/config.js"></script>
+<script th:src="@{/libs/bootstrap-3.3.4/js/bootstrap.min.js}" src="../static/libs/bootstrap-3.3.4/js/bootstrap.min.js"></script>
+<script th:src="@{/libs/xenon/js/joinable.js}" src="../static/libs/xenon/js/joinable.js"></script>
+<script th:src="@{/libs/devexpress-web-14.1/js/globalize.min.js}" src="../static/libs/devexpress-web-14.1/js/globalize.min.js"></script>
+<script th:src="@{/libs/devexpress-web-14.1/js/dx.chartjs.js}" src="../static/libs/devexpress-web-14.1/js/dx.chartjs.js"></script>
+<script th:src="@{/libs/vTicker.min.js}" src="../static/libs/vTicker.min.js"></script>
+<!-- <script type="text/javascript" src="js/widgets/layerList.js"></script> -->
+<script src="https://js.arcgis.com/4.0/init.js"></script>
+
+<script type="text/javascript">
+    require(["application/main"], function (main) {
+        window.main = new main(configOptions);
+    });
+</script>
+<!-- MAIN CORE JAVASCRIPT================================================== -->
+</body>
+</html>

@@ -1,0 +1,80 @@
+##
+server:
+  port: 9000
+
+##
+spring:
+  #数据源配置
+  datasource:
+    username: root
+    password: awsl12138
+    url: jdbc:mysql://localhost:3306/reservoir?useUnicode=true&characterEncoding=utf-8&useSSL=true&serverTimezone=UTC
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    type: com.alibaba.druid.pool.DruidDataSource
+    #druid 配置
+    druid:
+      initialSize: 5
+      minIdle: 5
+      maxActive: 20
+      maxWait: 60000
+      timeBetweenEvictionRunsMillis: 60000
+      minEvictableIdleTimeMillis: 300000
+      validationQuery: SELECT 1 FROM DUAL
+      testWhileIdle: true
+      testOnBorrow: false
+      testOnReturn: false
+      poolPreparedStatements: true
+
+
+  thymeleaf:
+    cache: false
+
+  #自动设置json返回格式
+  jackson:
+    #日期格式化
+    date-format: yyyy-MM-dd
+    time-zone: GMT+8
+    #设置空如何序列化
+    #default-property-inclusion: non_null
+    serialization:
+      #格式化输出
+      indent_output: true
+      #忽略无法转换的对象
+      fail_on_empty_beans: false
+    deserialization:
+      #允许对象忽略json中不存在的属性
+      fail_on_unknown_properties: false
+    parser:
+      #允许出现特殊字符和转义符
+      allow_unquoted_control_chars: true
+      #允许出现单引号
+      allow_single_quotes: true
+    property-naming-strategy: SNAKE_CASE
+  #文件上传限制
+  servlet:
+    multipart:
+      max-request-size: 100MB
+      max-file-size: 50MB
+  devtools:
+    restart:
+      enabled: true
+
+
+##mybatis设置
+mybatis:
+  mapper-locations: classpath:mapping/*Mapper.xml
+  type-aliases-package: com.liguo.reservoirmanagement.pojo
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+#    log-impl: org.apache.ibatis.logging.slf4j.Slf4jImpl
+    map-underscore-to-camel-case: true
+    cache-enabled: true
+
+##pagehelper设置
+pagehelper:
+  helperDialect: mysql
+  #分页合理化
+  reasonable: true
+  #支持mapper接口
+  supportMethodsArguments: true
+  params: count=countSql

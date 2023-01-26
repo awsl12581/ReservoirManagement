@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.liguo.reservoirmanagement.mapper.ReservoirCoordinatesMapper">
+  <resultMap id="BaseResultMap" type="com.liguo.reservoirmanagement.pojo.ReservoirCoordinates">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="reservoir_id" jdbcType="INTEGER" property="reservoirId" />
+    <result column="lat" jdbcType="DOUBLE" property="lat" />
+    <result column="lng" jdbcType="DOUBLE" property="lng" />
+    <result column="record" jdbcType="VARCHAR" property="record" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, reservoir_id, lat, lng, record
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from reservoir_coordinates
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <select id="selectByReservoirKey" resultType="com.liguo.reservoirmanagement.pojo.ReservoirCoordinates">
+    select *
+    from reservoir_coordinates
+    where reservoir_id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from reservoir_coordinates
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <delete id="deleteByReservoirId" parameterType="java.lang.Integer">
+    delete from reservoir_coordinates
+    where reservoir_id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" keyColumn="id" keyProperty="id" parameterType="com.liguo.reservoirmanagement.pojo.ReservoirCoordinates" useGeneratedKeys="true">
+    insert into reservoir_coordinates (reservoir_id, lat, lng, 
+      record)
+    values (#{reservoirId,jdbcType=INTEGER}, #{lat,jdbcType=DOUBLE}, #{lng,jdbcType=DOUBLE}, 
+      #{record,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" keyColumn="id" keyProperty="id" parameterType="com.liguo.reservoirmanagement.pojo.ReservoirCoordinates" useGeneratedKeys="true">
+    insert into reservoir_coordinates
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="reservoirId != null">
+        reservoir_id,
+      </if>
+      <if test="lat != null">
+        lat,
+      </if>
+      <if test="lng != null">
+        lng,
+      </if>
+      <if test="record != null">
+        record,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="reservoirId != null">
+        #{reservoirId,jdbcType=INTEGER},
+      </if>
+      <if test="lat != null">
+        #{lat,jdbcType=DOUBLE},
+      </if>
+      <if test="lng != null">
+        #{lng,jdbcType=DOUBLE},
+      </if>
+      <if test="record != null">
+        #{record,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.liguo.reservoirmanagement.pojo.ReservoirCoordinates">
+    update reservoir_coordinates
+    <set>
+      <if test="reservoirId != null">
+        reservoir_id = #{reservoirId,jdbcType=INTEGER},
+      </if>
+      <if test="lat != null">
+        lat = #{lat,jdbcType=DOUBLE},
+      </if>
+      <if test="lng != null">
+        lng = #{lng,jdbcType=DOUBLE},
+      </if>
+      <if test="record != null">
+        record = #{record,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.liguo.reservoirmanagement.pojo.ReservoirCoordinates">
+    update reservoir_coordinates
+    set reservoir_id = #{reservoirId,jdbcType=INTEGER},
+      lat = #{lat,jdbcType=DOUBLE},
+      lng = #{lng,jdbcType=DOUBLE},
+      record = #{record,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

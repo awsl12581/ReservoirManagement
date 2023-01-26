@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+	<title>智慧水库管理</title>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+<!--  <link rel="stylesheet" type="text/css" href="../static/css/register-style.css">-->
+  <link rel="stylesheet" type="text/css" th:href="@{/css/register-style.css}">
+<!--  <link rel="stylesheet" type="text/css" th:href="@{/css/bootstrap.min.css}">-->
+<!--  <link rel="stylesheet" type="text/css" th:href="@{/css/bootstrap-grid.min.css}">-->
+<!--  <link rel="stylesheet" type="text/css" th:href="@{/css/bootstrap-reboot.min.css}">-->
+<!--  <link rel="stylesheet" type="text/css" th:href="@{/css/bootstrap-utilities.min.css}">-->
+  <script type="text/javascript" th:src="@{/js/jquery-3.6.0.min.js}"></script>
+<!--  <script type="text/javascript" th:src="@{/js/bootstrap.min.js}"></script>-->
+<!--  <script type="text/javascript" th:src="@{/js/bootstrap.esm.min.js}"></script>-->
+<!--  <script type="text/javascript" th:src="@{/js/bootstrap.bundle.min.js}"></script>-->
+  <link href="https://fonts.googleapis.com/css?family=Nunito:400,600,700,800&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="cont">
+    <div class="form sign-in">
+      <h2>登录</h2>
+      <label>
+        <span>账号</span>
+        <input type="username" name="username" id="user-name">
+      </label>
+      <label>
+        <span>密码</span>
+        <input type="password" name="password" id="user-password">
+      </label>
+      <button class="submit" type="button" onclick="submit()">登录</button>
+      <script>
+        function submit() {
+          const username = $("input[id='user-name']").val();
+          const password = $("input[id='user-password']").val();
+          $.ajax({
+            url:'/login',
+            method: 'POST',
+            data:{
+              username: username,
+              password: password
+            },
+            success: function(data) {
+              console.log(data)
+              // window.location.href ='/home'
+              window.location.href ='/monitor'
+            }
+          })
+        }
+      </script>
+      <p class="forgot-pass">忘记密码？</p>
+
+      <div class="social-media">
+        <ul>
+<!--          <li><img th:src="@{/images/facebook.png}"></li>-->
+<!--          <li><img th:src="@{/images/twitter.png}"></li>-->
+<!--          <li><img th:src="@{/images/linkedin.png}"></li>-->
+<!--          <li><img th:src="@{/images/instagram.png}"></li>-->
+        </ul>
+      </div>
+    </div>
+
+    <div class="sub-cont">
+      <div class="img">
+        <div class="img-text m-up">
+          <h2>新用户？</h2>
+          <p>注册以登录</p>
+        </div>
+        <div class="img-text m-in">
+          <h2>已经注册？</h2>
+          <p>请登录使用系统</p>
+        </div>
+        <div class="img-btn">
+          <span class="m-up">注册</span>
+          <span class="m-in">登录</span>
+        </div>
+      </div>
+      <div class="form sign-up">
+        <h2>注册</h2>
+        <label>
+          <span>用户名</span>
+          <input type="text" name="username" id="register-username">
+        </label>
+        <label>
+          <span>邮箱</span>
+          <input type="email" name="email" id="register-email">
+        </label>
+        <label>
+          <span>密码</span>
+          <input type="password" name="password" id="register-password">
+        </label>
+        <label>
+          <span>确认密码</span>
+          <input type="password" id="ch" onmouseover="check()">
+          <span id="tip"></span>
+        </label>
+        <button type="button" class="submit" onclick="register()">立即注册</button>
+        <script type="text/javascript">
+          let flag = false
+          function check() {
+            var pass2 = $("input[id='ch']").val();
+            var pass1 = $("input[id='register-password']").val();
+            if (pass1 === pass2){
+              $("span[id='tip']").text("验证通过")
+              flag=true
+            }else{
+              $("span[id='tip']").text("确保一致")
+              flag=false
+            }
+          }
+          function register() {
+            const username = $("input[id='register-username']").val();
+            const password = $("input[id='register-password']").val();
+            const email = $("input[id='register-email']").val();
+            const json_data = {
+              "username": username,
+              "password": password,
+              "email": email
+            };
+            if (flag === false){
+              alert("数据有问题")
+              return
+            }
+            $.ajax({
+              url:'/register',
+              method: 'POST',
+              dataType: 'json',
+              contentType: 'application/json',
+              data: JSON.stringify(json_data),
+              success:function (option) {
+
+                if (option['code'] === '200'){
+                  alert(option['message'])
+                  window.location.replace("/")
+                }
+              }
+            })
+          }
+        </script>
+      </div>
+    </div>
+  </div>
+<script type="text/javascript" th:src="@{/js/register-script.js}"></script>
+
+</body>
+</html>

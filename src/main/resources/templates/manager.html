@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>人员管理</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!--      <link rel="stylesheet" type="text/css" href="../static/css/register-style.css">-->
+    <link rel="stylesheet" type="text/css" th:href="@{/css/bootstrap.min.css}" href="../static/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" th:href="@{/css/bootstrap-grid.min.css}"
+          href="../static/css/bootstrap-grid.min.css">
+    <link rel="stylesheet" type="text/css" th:href="@{/css/bootstrap-reboot.min.css}"
+          href="../static/css/bootstrap-reboot.min.css">
+    <link rel="stylesheet" type="text/css" th:href="@{/css/bootstrap-utilities.min.css}"
+          href="../static/css/bootstrap-utilities.min.css">
+    <link rel="stylesheet" type="text/css" th:href="@{/css/style.css}" href="../static/css/style.css"/>
+    <script type="text/javascript" th:src="@{/js/jquery-3.6.0.min.js}" src="../static/js/jquery-3.6.0.min.js"></script>
+    <script type="text/javascript" th:src="@{/js/bootstrap.min.js}" src="../static/js/bootstrap.min.js"></script>
+    <script type="text/javascript" th:src="@{/js/SimplePagination.js}"
+            src="../static/js/SimplePagination.js"></script>
+    <script type="text/javascript" th:src="@{/js/bootstrap.bundle.min.js}"
+            src="../static/js/bootstrap.bundle.min.js"></script>
+    <link href="https://fonts.googleapis.com/css?family=Nunito:400,600,700,800&display=swap" rel="stylesheet">
+</head>
+<body>
+<nav class="navbar navbar-dark bg-primary">
+    <div class="container-fluid">
+        <a class="navbar-brand">用户管理</a>
+    </div>
+</nav>
+<div class="row g-2">
+    <div class="col-md">
+        <div class="form-floating">
+            <input type="text" class="form-control" id="floatingInputGrid1" placeholder="请输入id" onkeyup="this.value=this.value.replace(/\D/g,'')"
+                   value="1">
+            <label for="floatingInputGrid1">用户id</label>
+        </div>
+    </div>
+    <div class="col-md">
+        <div class="form-floating">
+            <input type="text" class="form-control" id="floatingInputGrid2" placeholder="请输入用户名"
+                   value="">
+            <label for="floatingInputGrid2">用户名</label>
+        </div>
+    </div>
+    <div class="col-md align-content-center">
+        <button type='button' class='btn btn-success btn-lg' data-bs-toggle='modal' data-bs-target='#addModal' data-bs-whatever="0">添加数据</button>
+    </div>
+    
+</div>
+<script type="text/javascript">
+    $('#floatingInputGrid1').keyup(function(e){
+
+        var inp = $('#floatingInputGrid1').val()
+        const key = e.which;
+        if(key===13){//回车
+            $.ajax({
+                url : '/selectuserdata',
+                method: 'get',
+                data:{
+                    id:inp
+                },
+                success:function(data){
+                    console.log("查询结果："+data['data'])
+                    if (data['code']==='200')
+                    {onPageMessage(data)}else{
+                        addtoast(data['message'])
+                    }
+                }
+            })
+        }
+    });
+
+    $('#floatingInputGrid2').keyup(function(e){
+
+        var inp = $('#floatingInputGrid2').val()
+        const key = e.which;
+        if(key===13){//回车
+            $.ajax({
+                url : '/selectuserdata',
+                method: 'get',
+                data:{
+                    name:inp
+                },
+                success:function(data){
+                    console.log("查询结果："+data['data'])
+                    if (data['code']==='200')
+                    {onPageMessage(data)}else{
+                        addtoast(data['message'])
+                    }
+                }
+            })
+        }
+    });
+</script>
+<table class="table table-striped">
+    <thead>
+    <tr>
+        <th scope="col">#</th>
+        <th scope="col">id</th>
+        <th scope="col">用户名</th>
+        <th scope="col">密码</th>
+        <th scope="col">邮箱</th>
+        <th scope="col">权限</th>
+    </tr>
+    </thead>
+    <tbody id="table-body"></tbody>
+
+</table>
+<!-- 居中 -->
+<div class="boxx"></div>
+<!--<form action="" id="page-go">-->
+<!--    <input type="text" id="page-num">-->
+<!--    <input type="submit" id="goto" value="Go">-->
+<!--</form>-->
+
+
+<script type="text/javascript">
+    let slp
+    window.onload = function () {
+        loadmessage(1);
+        // 查询全部页数
+        $.ajax({
+            url: '/totalusernum',
+            method: 'get',
+            success: function (data) {
+                if (data['code'] === '200') {
+                    console.log("number:"+data['data']['number']+" pagecut:"+data['data']['pagecut'])
+                    number = data['data']['number']
+                    pagecut = data['data']['pagecut']
+                    page = Math.ceil(number/pagecut)
+                    console.log(page)
+                    slp = new SimplePagination(page)
+                    slp.init({
+                        container: '.boxx',
+                        maxShowBtnCount: 1,
+                        onPageChange: state => {
+                            console.log('pagination change:', state.pageNumber)
+                            loadmessage(state.pageNumber)
+                        }
+                    })
+                    // document.getElementById('page-go').addEventListener('submit', e => {
+                    //     e.preventDefault()
+                    //     slp.gotoPage(+document.getElementById('page-num').value)
+                    // })
+                }else{
+                    slp = new SimplePagination(1)
+                    slp.init({
+                        container: '.boxx',
+                        maxShowBtnCount: 1,
+                        onPageChange: state => {
+                            console.log('pagination change:', state.pageNumber)
+                            loadmessage(state.pageNumber)
+                        }
+                    })
+                    // document.getElementById('page-go').addEventListener('submit', e => {
+                    //     e.preventDefault()
+                    //     slp.gotoPage(+document.getElementById('page-num').value)
+                    // })
+
+                }
+            }
+        })
+    }
+
+
+</script>
+<script type="text/javascript">
+    let tableData = {};
+
+    function onPageMessage(data) {
+        tableData = data['data'];
+        console.log(tableData)
+        $('#table-body').empty()
+        for (let i = 0; i < tableData.length; i++) {
+            const element = tableData[i];
+            console.log(element);
+            $('#table-body').append("    <tr>" +
+                "      <td scope='row'>" + i + "</td>" +
+                "      <td>" + element['id'] + "</td>" +
+                "      <td class='reservoir_name_" + i + "'>" + element['username'] + "</td>" +
+                "      <td class='address_" + i + "' >" + element['password'] + "</td>" +
+                "      <td class='completion_date_" + i + "' >" + element['email'] + "</td>" +
+                "      <td>" +
+                "<button type='button' class='btn btn-primary' data-bs-toggle='modal' data-bs-target='#staticBackdrop' onclick='detail(" + i + ")'>详情</button>&nbsp;&nbsp;" +
+                "<button type='button' class='btn btn-info' data-bs-toggle='modal' data-bs-target='#exampleModal' data-bs-whatever=" + i + ">修改</button>&nbsp;&nbsp;" +
+                "<button type='submit' class='btn btn-danger' onclick='delmsg(" + i + ")'>删除</button>&nbsp;&nbsp;" +
+                "</td>" +
+                "    </tr>")
+        }
+    }
+
+
+    function loadmessage(pagenum) {
+
+        $.ajax({
+            url: '/loadusermessage',
+            method: 'get',
+            data: {
+                pagenum: pagenum
+            },
+            success(data) {
+                onPageMessage(data)
+            }
+        })
+    }
+
+    function detail(id) {
+        $("div[id='details']").empty();
+        $("div[id='details']").append("<span>" + tableData[id]['authority'] + "</span>")
+    }
+
+    function delmsg(id) {
+        var _id = tableData[id]['id'];
+        $.ajax({
+            url: '/delusermsg',
+            method: 'get',
+            data: {
+                id: _id
+            },
+            success: function (data) {
+                if (data['code'] === '200') {
+                    location.reload();
+                } else {
+                    alert(data['message']);
+                }
+            }
+        })
+
+    }
+
+
+</script>
+
+<!-- 信息展示模态框 -->
+<div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+     aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="staticBackdropLabel">权限描述</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body" id="details">
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">确定</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--修改模态框-->
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+
+                <h5 class="modal-if">#</h5>
+                <h5 class="modal-title" id="exampleModalLabel">信息预览</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form>
+                    <div class="mb-3">
+                        <label for="message-name" class="col-form-label">用户名:</label>
+                        <input type="text" class="form-control" id="message-name">
+                    </div>
+                    <div class="mb-3">
+                        <label for="message-address" class="col-form-label">密码:</label>
+                        <input type="text" class="form-control" id="message-address">
+                    </div>
+                    <div class="mb-3">
+                        <label for="message-build" class="col-form-label">邮箱:</label>
+                        <input type="text" class="form-control" id="message-build">
+                    </div>
+                    <div class="mb-3">
+                        <label for="message-describe" class="col-form-label">权限:</label>
+                        <textarea class="form-control" id="message-describe"></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">关闭</button>
+                <button type="button" class="btn btn-primary" onclick="updatemsg()">修改</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--添加模态框-->
+<div class="modal fade" id="addModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+
+                <h5 class="modal-if">#</h5>
+                <h5 class="modal-title" id="addModalLabel">信息预览</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form>
+                    <div class="mb-3">
+                        <label for="message-name" class="col-form-label">用户名:</label>
+                        <input type="text" class="form-control" id="add-message-name">
+                    </div>
+                    <div class="mb-3">
+                        <label for="message-address" class="col-form-label">密码:</label>
+                        <input type="text" class="form-control" id="add-message-address">
+                    </div>
+                    <div class="mb-3">
+                        <label for="message-build" class="col-form-label">邮箱:</label>
+                        <input type="text" class="form-control" id="add-message-build">
+                    </div>
+                    <div class="mb-3">
+                        <label for="message-describe" class="col-form-label">权限:</label>
+                        <input type="text" class="form-control" id="add-message-lat"></input>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">关闭</button>
+                <button type="button" class="btn btn-primary" onclick="addmsg()">添加</button>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+    function addmsg() {
+        var exampleModal = document.getElementById('addModal')
+        var name = exampleModal.querySelector('.modal-body #add-message-name')
+        var address = exampleModal.querySelector('.modal-body #add-message-address')
+        var build = exampleModal.querySelector('.modal-body #add-message-build')
+        var lat = exampleModal.querySelector('.modal-body #add-message-lat')
+
+        const datamsg = {
+            'id': -1,
+            'username': name.value,
+            'password': address.value,
+            'email': build.value,
+            'authority' : lat.value,
+        };
+        console.log(datamsg)
+
+        $.ajax({
+            url: '/addusermsg',
+            method: 'POST',
+            dataType: 'json',
+            contentType: 'application/json',
+            data: JSON.stringify(datamsg),
+            success(data) {
+                if (data['code'] === '200') {
+                    alert("修改成功")
+                    location.reload()
+
+                } else {
+                    alert("重试")
+                }
+            }
+        })
+    }
+
+    function updatemsg() {
+
+        var modalTitle = exampleModal.querySelector('.modal-title')
+        var query_id = modalTitle.textContent
+        var id = tableData[query_id]['id']
+        var name = exampleModal.querySelector('.modal-body #message-name')
+        var address = exampleModal.querySelector('.modal-body #message-address')
+        var build = exampleModal.querySelector('.modal-body #message-build')
+        var describe = exampleModal.querySelector('.modal-body #message-describe')
+
+        const datamsg = {
+            'id': id,
+            'username': name.value,
+            'password': address.value,
+            'email': build.value,
+            'authority': describe.value
+        };
+        console.log(datamsg)
+
+        $.ajax({
+            url: '/updateusermsg',
+            method: 'POST',
+            dataType: 'json',
+            contentType: 'application/json',
+            data: JSON.stringify(datamsg),
+            success(data) {
+                if (data['code'] === '200') {
+                    alert("修改成功")
+                    tableData[query_id]['username'] = name.value
+                    tableData[query_id]['password'] = address.value
+                    tableData[query_id]['email'] = build.value
+                    tableData[query_id]['authority'] = describe.value
+
+                } else {
+                    alert("重试")
+                }
+            }
+        })
+    }
+</script>
+<script>
+    var exampleModal = document.getElementById('exampleModal')
+    exampleModal.addEventListener('show.bs.modal', function (event) {
+        // Button that triggered the modal
+        var button = event.relatedTarget
+        // Extract info from data-bs-* attributes
+        var recipient = button.getAttribute('data-bs-whatever')
+        // If necessary, you could initiate an AJAX request here
+        // and then do the updating in a callback.
+        //
+        // Update the modal's content.
+        var modalTitle = exampleModal.querySelector('.modal-title')
+        var name = exampleModal.querySelector('.modal-body #message-name')
+        var address = exampleModal.querySelector('.modal-body #message-address')
+        var build = exampleModal.querySelector('.modal-body #message-build')
+        var describe = exampleModal.querySelector('.modal-body #message-describe')
+
+        modalTitle.textContent = recipient
+
+        console.log(tableData[recipient]['username'])
+        name.value = tableData[recipient]['username']
+        address.value = tableData[recipient]['password']
+        build.value = tableData[recipient]['email']
+        describe.value = tableData[recipient]['authority']
+    })
+</script>
+
+<!--弹出提示-->
+
+<div class="toast-container position-fixed bottom-0 end-0 p-3">
+    <div id="liveToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="toast-header">
+            <img src="..." class="rounded me-2" alt="...">
+            <strong class="me-auto">提示</strong>
+            <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+        <div class="toast-body">
+            Hello, world! This is a toast message.
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+    function addtoast(data) {
+        const toastLiveExample = document.getElementById('liveToast')
+        const toast = new bootstrap.Toast(toastLiveExample)
+        $('.toast-body').val(data)
+        console.log("展示提醒")
+        toast.show()
+    }
+</script>
+
+</body>
+</html>

@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.liguo.reservoirmanagement.mapper.ReservoirInfoMapper">
+    <resultMap id="BaseResultMap" type="com.liguo.reservoirmanagement.pojo.ReservoirInfo">
+        <id column="id" jdbcType="INTEGER" property="id"/>
+        <result column="reservoir_name" jdbcType="VARCHAR" property="reservoirName"/>
+        <result column="address" jdbcType="VARCHAR" property="address"/>
+        <result column="completion_date" jdbcType="VARCHAR" property="completionDate"/>
+        <result column="describe" jdbcType="VARCHAR" property="describe"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+        id, reservoir_name, address, completion_date, `describe`
+    </sql>
+    <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from reservoir_info
+        where id = #{id,jdbcType=INTEGER}
+    </select>
+    <select id="selectByPageNumber" resultType="com.liguo.reservoirmanagement.pojo.ReservoirInfo">
+        select
+        <include refid="Base_Column_List"/>
+        from reservoir_info
+    </select>
+    <select id="selectNumber" resultType="java.lang.Integer">
+        select count(*)
+        from reservoir_info
+    </select>
+    <select id="selectByReservoirName" resultType="com.liguo.reservoirmanagement.pojo.ReservoirInfo">
+        select *
+        from reservoir_info
+        where reservoir_name = #{name,jdbcType=VARCHAR}
+    </select>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+        delete
+        from reservoir_info
+        where id = #{id,jdbcType=INTEGER}
+    </delete>
+    <insert id="insert" keyColumn="id" keyProperty="id" parameterType="com.liguo.reservoirmanagement.pojo.ReservoirInfo"
+            useGeneratedKeys="true">
+        insert into reservoir_info (reservoir_name, address, completion_date,
+                                    `describe`)
+        values (#{reservoirName,jdbcType=VARCHAR}, #{address,jdbcType=VARCHAR}, #{completionDate,jdbcType=VARCHAR},
+                #{describe,jdbcType=VARCHAR})
+        <selectKey keyProperty="id" order="AFTER" resultType="Integer">
+            <!-- 得到刚insert到数据表中的记录的主键值，只适用于自增主键 -->
+            SELECT LAST_INSERT_ID() AS id
+        </selectKey>
+
+    </insert>
+    <insert id="insertSelective" keyColumn="id" keyProperty="id"
+            parameterType="com.liguo.reservoirmanagement.pojo.ReservoirInfo" useGeneratedKeys="true">
+        insert into reservoir_info
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="reservoirName != null">
+                reservoir_name,
+            </if>
+            <if test="address != null">
+                address,
+            </if>
+            <if test="completionDate != null">
+                completion_date,
+            </if>
+            <if test="describe != null">
+                `describe`,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="reservoirName != null">
+                #{reservoirName,jdbcType=VARCHAR},
+            </if>
+            <if test="address != null">
+                #{address,jdbcType=VARCHAR},
+            </if>
+            <if test="completionDate != null">
+                #{completionDate,jdbcType=VARCHAR},
+            </if>
+            <if test="describe != null">
+                #{describe,jdbcType=VARCHAR},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="com.liguo.reservoirmanagement.pojo.ReservoirInfo">
+        update reservoir_info
+        <set>
+            <if test="reservoirName != null">
+                reservoir_name = #{reservoirName,jdbcType=VARCHAR},
+            </if>
+            <if test="address != null">
+                address = #{address,jdbcType=VARCHAR},
+            </if>
+            <if test="completionDate != null">
+                completion_date = #{completionDate,jdbcType=VARCHAR},
+            </if>
+            <if test="describe != null">
+                `describe` = #{describe,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="com.liguo.reservoirmanagement.pojo.ReservoirInfo">
+        update reservoir_info
+        set reservoir_name  = #{reservoirName,jdbcType=VARCHAR},
+            address         = #{address,jdbcType=VARCHAR},
+            completion_date = #{completionDate,jdbcType=VARCHAR},
+            `describe`      = #{describe,jdbcType=VARCHAR}
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+</mapper>
